@@ -49,6 +49,7 @@ def parse_args():
 
 
 def extract_feat(model, sound_input, config):
+    sound_input, sound_file_name = sound_input
     layer_min = config.layer_min
     layer_max = config.layer_max if config.layer_max is not None else layer_min + 1
 
@@ -60,10 +61,13 @@ def extract_feat(model, sound_input, config):
         feature = model.sess.run(model.layers[idx], feed_dict=feed_dict)
         features[idx] = feature
         if config.is_save:
-            np.save(os.path.join(config.outpath, 'tf_fea{}.npy'.format( \
+            output_path = os.path.join(config.outpath, sound_file_name)
+            if not os.path.exists(output_path):
+                os.makedirs(output_path)
+            np.save(os.path.join(output_path, 'tf_fea{}.npy'.format( \
                 str(idx).zfill(2))), np.squeeze(feature))
-            print("Save layer {} with shape {} as {}/tf_fea{}.npy".format( \
-                    idx, np.squeeze(feature).shape, config.outpath, str(idx).zfill(2)))
+            #print("Save layer {} with shape {} as {}/tf_fea{}.npy".format( \
+            #        idx, np.squeeze(feature).shape, config.outpath, str(idx).zfill(2)))
 
     return features
 

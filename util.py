@@ -27,9 +27,12 @@ def load_from_txt(txt_name, config=local_config):
         txt_list = handle.read().splitlines()
 
     audios = []
-    for idx, audio_path in tqdm(enumerate(txt_list)):
+    print("preprocessing audios...")
+    for idx, audio_path in tqdm(enumerate(txt_list), total=len(txt_list)):
         sound_sample, _ = load_audio(audio_path)
-        audios.append(preprocess(sound_sample, config))
+        # junwei: need the audio file names here
+        file_name = os.path.splitext(os.path.basename(audio_path))[0]
+        audios.append((preprocess(sound_sample, config), file_name))
 
     return audios
 
