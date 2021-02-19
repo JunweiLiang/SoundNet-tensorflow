@@ -1,9 +1,10 @@
 import numpy as np
 import librosa
 import pdb
+from tqdm import tqdm
 
 local_config = {
-            'batch_size': 64, 
+            'batch_size': 64,
             'load_size': 22050*20,
             'phase': 'extract'
             }
@@ -17,7 +18,7 @@ def load_from_list(name_list, config=local_config):
     for idx, audio_path in enumerate(name_list):
         sound_sample, _ = load_audio(audio_path)
         audios[idx] = preprocess(sound_sample, config)
-        
+
     return audios
 
 
@@ -26,10 +27,10 @@ def load_from_txt(txt_name, config=local_config):
         txt_list = handle.read().splitlines()
 
     audios = []
-    for idx, audio_path in enumerate(txt_list):
+    for idx, audio_path in tqdm(enumerate(txt_list)):
         sound_sample, _ = load_audio(audio_path)
         audios.append(preprocess(sound_sample, config))
-        
+
     return audios
 
 
@@ -56,7 +57,7 @@ def preprocess(raw_audio, config=local_config):
     # Make minimum length available
     length = config['load_size']
     if length > raw_audio.shape[0]:
-        raw_audio = np.tile(raw_audio, length/raw_audio.shape[0] + 1)
+        raw_audio = np.tile(raw_audio, int(length/raw_audio.shape[0]) + 1)
 
     # Make equal training length
     if config['phase'] != 'extract':
