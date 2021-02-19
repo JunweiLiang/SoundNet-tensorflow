@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     # Load pre-trained model
     G_name = './models/sound8.npy'
-    param_G = np.load(G_name, encoding='latin1').item()
+    param_G = np.load(G_name, encoding='latin1', allow_pickle=True).item()
     dump_path = './output/'
 
     with tf.Session() as session:
@@ -114,7 +114,7 @@ if __name__ == '__main__':
         model.load()
 
         # Demo
-        sound_input = np.reshape(np.load('data/demo.npy', encoding='latin1'), [local_config['batch_size'], -1, 1, 1])
+        sound_input = np.reshape(np.load('data/demo.npy', encoding='latin1', allow_pickle=True), [local_config['batch_size'], -1, 1, 1])
         feed_dict = {model.sound_input_placeholder: sound_input}
 
         # Forward
