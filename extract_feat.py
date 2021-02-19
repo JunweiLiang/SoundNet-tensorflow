@@ -107,5 +107,5 @@ if __name__ == '__main__':
 
         model.load()
 
-        for sound_sample in sound_samples:
+        for sound_sample in tqdm(sound_samples):
             output = extract_feat(model, sound_sample, args)
