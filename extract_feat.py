@@ -107,6 +107,7 @@ if __name__ == '__main__':
         session.run(init)
 
         model.load()
+        print("total model layers: %s" % len(model.layers))
 
         for sound_sample in tqdm(sound_samples):
             output = extract_feat(model, sound_sample, args)
