@@ -7,6 +7,7 @@ import numpy as np
 import argparse
 import sys
 import os
+from tqdm import tqdm
 
 # Make xrange compatible in both Python 2, 3
 try:

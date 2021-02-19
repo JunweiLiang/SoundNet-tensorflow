@@ -11,8 +11,8 @@ try:
 except NameError:
     xrange = range
 
-local_config = {  
-            'batch_size': 1, 
+local_config = {
+            'batch_size': 1,
             'eps': 1e-5,
             'name_scope': 'SoundNet',
             }
@@ -25,10 +25,10 @@ class Model():
         self.sess           = session
         self.config         = config
         self.param_G        = param_G
-        
+
         # Placeholder
         self.add_placeholders()
-        
+
         # Generator
         self.add_generator(name_scope=self.config['name_scope'])
 
@@ -41,7 +41,7 @@ class Model():
     def add_generator(self, name_scope='SoundNet'):
         with tf.variable_scope(name_scope) as scope:
             self.layers = {}
-            
+
             # Stream one: conv1 ~ conv7
             self.layers[1] = conv2d(self.sound_input_placeholder, 1, 16, k_h=64, d_h=2, p_h=32, name_scope='conv1')
             self.layers[2] = batch_norm(self.layers[1], 16, self.config['eps'], name_scope='conv1')
@@ -88,7 +88,7 @@ class Model():
                     try:
                         var = tf.get_variable(subkey)
                         self.sess.run(var.assign(data_dict[key][subkey]))
-                        print('Assign pretrain model {} to {}'.format(subkey, key))
+                        #print('Assign pretrain model {} to {}'.format(subkey, key))
                     except:
                         print('Ignore {}'.format(key))
         self.param_G.clear()
@@ -96,10 +96,10 @@ class Model():
 
 
 if __name__ == '__main__':
-    
+
     layer_min = int(sys.argv[1])
     layer_max = int(sys.argv[2]) if len(sys.argv) > 2 else layer_min + 1
-    
+
     # Load pre-trained model
     G_name = './models/sound8.npy'
     param_G = np.load(G_name, encoding='latin1').item()
@@ -110,13 +110,13 @@ if __name__ == '__main__':
         model = Model(session, config=local_config, param_G=param_G)
         init = tf.global_variables_initializer()
         session.run(init)
-        
+
         model.load()
-        
+
         # Demo
         sound_input = np.reshape(np.load('data/demo.npy', encoding='latin1'), [local_config['batch_size'], -1, 1, 1])
         feed_dict = {model.sound_input_placeholder: sound_input}
-        
+
         # Forward
         for idx in xrange(layer_min, layer_max):
             feature = session.run(model.layers[idx], feed_dict=feed_dict)
